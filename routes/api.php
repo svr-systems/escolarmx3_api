@@ -7,6 +7,7 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CourseTypeCotroller;
 use App\Http\Controllers\CycleController;
 use App\Http\Controllers\InstitutionContrller;
+use App\Http\Controllers\KinshipController;
 use App\Http\Controllers\LevelController;
 use App\Http\Controllers\MaritalStatusController;
 use App\Http\Controllers\ModalityController;
@@ -15,6 +16,7 @@ use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ShiftController;
 use App\Http\Controllers\StateController;
+use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\TermController;
 use App\Http\Controllers\UserController;
@@ -43,6 +45,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('shifts', [ShiftController::class, 'index']);
     Route::get('terms', [TermController::class, 'index']);
     Route::get('course_types', [CourseTypeCotroller::class, 'index']);
+    Route::get('kinships', [KinshipController::class, 'index']);
 
 
     //Users
@@ -66,5 +69,8 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     //Cycles
     Route::apiResource('cycles', CycleController::class);
+
+    //Students
+    Route::apiResource('students', StudentController::class);
 
 });

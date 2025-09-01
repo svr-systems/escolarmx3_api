@@ -88,6 +88,13 @@ return [
             'visibility' => 'public',
         ],
 
+        'Students' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private/Students'),
+            'url' => env('APP_URL') . '/storage',
+            'visibility' => 'public',
+        ],
+
     ],
 
     /*
