@@ -117,7 +117,7 @@ class StudentDocumentController extends Controller
       $data->document_dlt,
       'StudentDocuments'
     );
-    $item->document_path = "test.tst";
+    // $item->document_path = "test.tst";
     $item->save();
 
     return $item;

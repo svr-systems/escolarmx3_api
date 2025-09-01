@@ -119,7 +119,7 @@ class StudentProgramController extends Controller
       $data->equivalency_dlt,
       'StudentEquivalencies'
     );
-    $item->equivalency_path = "test.tst";
+    // $item->equivalency_path = "test.tst";
     $item->save();
 
     return $item;

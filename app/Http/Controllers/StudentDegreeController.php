@@ -133,8 +133,8 @@ class StudentDegreeController extends Controller
       'StudentDegrees'
     );
     
-    $item->license_path = "test.tst";
-    $item->certificate_path = "test.tst";
+    // $item->license_path = "test.tst";
+    // $item->certificate_path = "test.tst";
     $item->save();
 
     return $item;
