@@ -102,6 +102,13 @@ return [
             'visibility' => 'public',
         ],
 
+        'StudentDocuments' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private/Students/Documents'),
+            'url' => env('APP_URL') . '/storage',
+            'visibility' => 'public',
+        ],
+
     ],
 
     /*

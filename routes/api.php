@@ -6,6 +6,7 @@ use App\Http\Controllers\CampusController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CourseTypeCotroller;
 use App\Http\Controllers\CycleController;
+use App\Http\Controllers\DocumentTypeController;
 use App\Http\Controllers\InstitutionContrller;
 use App\Http\Controllers\KinshipController;
 use App\Http\Controllers\LevelController;
@@ -18,6 +19,7 @@ use App\Http\Controllers\ShiftController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\StudentDegreeController;
+use App\Http\Controllers\StudentDocumentController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\TermController;
 use App\Http\Controllers\UserController;
@@ -30,8 +32,6 @@ Route::get('/user', function (Request $request) {
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('login', [AuthController::class, 'login']);
-
-// Route::get('credential/{user_id}', [ImageController::class, 'UserDNI']);
 
 Route::group(['middleware' => 'auth:api'], function () {
 
@@ -47,6 +47,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('terms', [TermController::class, 'index']);
     Route::get('course_types', [CourseTypeCotroller::class, 'index']);
     Route::get('kinships', [KinshipController::class, 'index']);
+    Route::get('document_types', [DocumentTypeController::class, 'index']);
 
 
     //Users
@@ -73,6 +74,9 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     //Student degrees
     Route::apiResource('students/degrees', StudentDegreeController::class);
+
+    //Student documents
+    Route::apiResource('students/documents', StudentDocumentController::class);
 
     //Students
     Route::apiResource('students', StudentController::class);

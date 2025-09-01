@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
         // $this->call(ShiftsSeeder::class);
         // $this->call(TermsSeeder::class);
         // $this->call(CourseTypesSeeder::class);
-        $this->call(KinshipsSeeder::class);
+        // $this->call(KinshipsSeeder::class);
+        $this->call(DocumentTypesSeeder::class);
     }
 }
