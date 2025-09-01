@@ -17,6 +17,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ShiftController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\StudentDegreeController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\TermController;
 use App\Http\Controllers\UserController;
@@ -69,6 +70,9 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     //Cycles
     Route::apiResource('cycles', CycleController::class);
+
+    //Student degrees
+    Route::apiResource('students/degrees', StudentDegreeController::class);
 
     //Students
     Route::apiResource('students', StudentController::class);

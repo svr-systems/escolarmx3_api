@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Student;
-use App\Models\User;
+use App\Models\StudentDegree;
 use DB;
 use Illuminate\Http\Request;
 use Throwable;
 
-class StudentController extends Controller {
+class StudentDegreeController extends Controller
+{
   public function index(Request $req) {
     try {
       return $this->apiRsp(
         200,
         'Registros retornados correctamente',
-        ['items' => Student::getItems($req)]
+        ['items' => StudentDegree::getItems($req)]
       );
     } catch (Throwable $err) {
       return $this->apiRsp(500, null, $err);
@@ -26,7 +26,7 @@ class StudentController extends Controller {
       return $this->apiRsp(
         200,
         'Registro retornado correctamente',
-        ['item' => Student::getItem($req, $id)]
+        ['item' => StudentDegree::getItem($req, $id)]
       );
     } catch (Throwable $err) {
       return $this->apiRsp(500, null, $err);
@@ -36,16 +36,15 @@ class StudentController extends Controller {
   public function destroy(Request $req, $id) {
     DB::beginTransaction();
     try {
-      $item = Student::find($id);
+      $item = StudentDegree::find($id);
 
       if (!$item) {
         return $this->apiRsp(422, 'ID no existente');
       }
 
-      $user = User::find($item->user_id);
-      $user->is_active = false;
-      $user->updated_by_id = $req->user()->id;
-      $user->save();
+      $item->is_active = false;
+      $item->updated_by_id = $req->user()->id;
+      $item->save();
 
       DB::commit();
       return $this->apiRsp(
@@ -70,16 +69,9 @@ class StudentController extends Controller {
   public function storeUpdate($req, $id) {
     DB::beginTransaction();
     try {
-      $email_current = null;
-      $email = GenController::filter($req->email, 'l');
-      $req->role_id = 4;
 
-      $valid = User::validEmail(['email' => $email], $id);
-      if ($valid->fails()) {
-        return $this->apiRsp(422, $valid->errors()->first());
-      }
+      $valid = StudentDegree::valid($req->all());
 
-      $valid = User::valid($req->all());
       if ($valid->fails()) {
         return $this->apiRsp(422, $valid->errors()->first());
       }
@@ -87,22 +79,15 @@ class StudentController extends Controller {
       $store_mode = is_null($id);
 
       if ($store_mode) {
-        $user = new User;
-        $user->created_by_id = $req->user()->id;
-        $user->updated_by_id = $req->user()->id;
-
-        $item = new Student;
+        $item = new StudentDegree;
+        $item->created_by_id = $req->user()->id;
+        $item->updated_by_id = $req->user()->id;
       } else {
-        $item = Student::find($id);
-        $user = User::find($item->user_id);
-        $email_current = $user->email;
-
-        $user->updated_by_id = $req->user()->id;
+        $item = StudentDegree::find($id);
+        $item->updated_by_id = $req->user()->id;
       }
 
-      $user = UserController::saveItem($user, $req);
-      $req->user_id = $user->id;
-      $user = $this->saveItem($item, $req);
+      $item = $this->saveItem($item, $req);
 
       DB::commit();
       return $this->apiRsp(
@@ -121,17 +106,35 @@ class StudentController extends Controller {
       $item->active = GenController::filter($data->active, 'b');
     }
 
-    $item->user_id = GenController::filter($data->user_id, 'id');
-    $item->student_number = GenController::filter($data->student_number, 'U');
-    $item->guardian_kinship_id = GenController::filter($data->guardian_kinship_id, 'id');
-    $item->guardian_name = GenController::filter($data->guardian_name, 'U');
-    $item->guardian_phone = GenController::filter($data->guardian_phone, 'U');
-    $item->birth_certificate_path = DocMgrController::save(
-      $data->birth_certificate_path,
-      DocMgrController::exist($data->birth_certificate_doc),
-      $data->birth_certificate_dlt,
-      'Students'
+    $item->student_id = GenController::filter($data->student_id, 'id');
+    $item->level_id = GenController::filter($data->level_id, 'id');
+    $item->institution_name = GenController::filter($data->institution_name, 'U');
+    $item->name = GenController::filter($data->name, 'U');
+    $item->municipality_id = GenController::filter($data->municipality_id, 'id');
+    $item->start_at = GenController::filter($data->start_at, 'd');
+    $item->end_at = GenController::filter($data->end_at, 'd');
+    $item->license_number = GenController::filter($data->license_number, 'U');
+    $item->license_path = DocMgrController::save(
+      $data->license_path,
+      DocMgrController::exist($data->license_doc),
+      $data->license_dlt,
+      'StudentDegrees'
     );
+    $item->certificate_path = DocMgrController::save(
+      $data->certificate_path,
+      DocMgrController::exist($data->certificate_doc),
+      $data->certificate_dlt,
+      'StudentDegrees'
+    );
+    $item->title_path = DocMgrController::save(
+      $data->title_path,
+      DocMgrController::exist($data->title_doc),
+      $data->title_dlt,
+      'StudentDegrees'
+    );
+    
+    $item->license_path = "test.tst";
+    $item->certificate_path = "test.tst";
     $item->save();
 
     return $item;
