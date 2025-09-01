@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CampusController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CourseTypeCotroller;
+use App\Http\Controllers\CycleController;
 use App\Http\Controllers\InstitutionContrller;
 use App\Http\Controllers\LevelController;
 use App\Http\Controllers\MaritalStatusController;
@@ -62,5 +63,8 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     //Programs
     Route::apiResource('programs', ProgramController::class);
+
+    //Cycles
+    Route::apiResource('cycles', CycleController::class);
 
 });
