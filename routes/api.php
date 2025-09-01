@@ -20,6 +20,7 @@ use App\Http\Controllers\StateController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\StudentDegreeController;
 use App\Http\Controllers\StudentDocumentController;
+use App\Http\Controllers\StudentProgramController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\TermController;
 use App\Http\Controllers\UserController;
@@ -77,6 +78,9 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     //Student documents
     Route::apiResource('students/documents', StudentDocumentController::class);
+
+    //Student programs
+    Route::apiResource('students/programs', StudentProgramController::class);
 
     //Students
     Route::apiResource('students', StudentController::class);

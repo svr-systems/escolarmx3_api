@@ -109,6 +109,13 @@ return [
             'visibility' => 'public',
         ],
 
+        'StudentEquivalencies' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private/Students/Equivalencies'),
+            'url' => env('APP_URL') . '/storage',
+            'visibility' => 'public',
+        ],
+
     ],
 
     /*
