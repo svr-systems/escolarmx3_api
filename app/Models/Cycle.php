@@ -92,7 +92,7 @@ class Cycle extends Model
             $item->uiid = Cycle::getUiid($item->id);
             $item->created_by = User::find($item->created_by_id, ['email']);
             $item->updated_by = User::find($item->updated_by_id, ['email']);
-            $item->term = Term::find($item->term_id);
+            $item->term = Term::find($item->term_id,['name']);
         }
 
         return $item;

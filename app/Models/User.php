@@ -37,7 +37,7 @@ class User extends Authenticatable {
       'name' => 'required|min:2|max:50',
       'surname_p' => 'required|min:2|max:25',
       'surname_m' => 'nullable|min:2|max:25',
-      'curp' => 'nullable|min:18|max:18',
+      'curp' => 'required|min:18|max:18',
       'role_id' => 'required|numeric',
       'marital_status_id' => 'required|numeric',
       'phone' => 'nullable|min:10|max:10',
@@ -128,10 +128,11 @@ class User extends Authenticatable {
         'surname_m',
         'email',
         'curp',
+        'curp_path',
         'phone',
         'role_id',
         'marital_status_id',
-        'avatar_url',
+        'avatar_path',
       ]);
 
     if ($item) {
@@ -140,10 +141,18 @@ class User extends Authenticatable {
       $item->updated_by = User::find($item->updated_by_id, ['email']);
       $item->full_name = GenController::getFullName($item);
       $item->role = Role::find($item->role_id, ['name']);
-      $item->marital = MaritalStatus::find($item->marital_status_id, ['name']);
-      $item->avatar_b64 = DocMgrController::getB64($item->avatar_url, 'User');
+      $item->marital_status = MaritalStatus::find($item->marital_status_id, ['name']);
+      $item->avatar_b64 = DocMgrController::getB64($item->avatar_path, 'User');
       $item->avatar_doc = null;
       $item->avatar_dlt = false;
+      $item->curp_b64 = DocMgrController::getB64($item->curp_path, 'User');
+      $item->curp_doc = null;
+      $item->curp_dlt = false;
+      $item->user_campuses = UserCampus::where('is_active',true)->where('user_id',$item->id)->get();
+
+      foreach ($item->user_campuses as $key => $user_campus) {
+        $user_campus->campus = Campus::find($user_campus->campus_id, ['name','code']);
+      }
     }
 
     return $item;
@@ -155,7 +164,7 @@ class User extends Authenticatable {
       'name',
       'surname_p',
       'surname_m',
-      'avatar_url',
+      'avatar_path',
       'email',
       'role_id',
     ]);

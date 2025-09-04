@@ -83,8 +83,7 @@ class StudentDocument extends Model {
       $item->uiid = StudentDocument::getUiid($item->id);
       $item->created_by = User::find($item->created_by_id, ['email']);
       $item->updated_by = User::find($item->updated_by_id, ['email']);
-      $item->level = Level::find($item->level_id);
-      $item->document_type = DocumentType::find($item->document_type_id);
+      $item->document_type = DocumentType::find($item->document_type_id,['name']);
       $item->document_b64 = DocMgrController::getB64($item->document_path, 'StudentDocuments');
       $item->document_doc = null;
       $item->document_dlt = false;

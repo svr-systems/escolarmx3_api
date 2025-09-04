@@ -9,8 +9,7 @@ use App\Models\User;
 use Throwable;
 use DB;
 
-class TeacherController extends Controller
-{
+class TeacherController extends Controller {
   public function index(Request $req) {
     try {
       return $this->apiRsp(
@@ -61,6 +60,32 @@ class TeacherController extends Controller
 
   }
 
+  public function restore(Request $req) {
+    DB::beginTransaction();
+    try {
+      $item = Teacher::find($req->id);
+
+      if (!$item) {
+        return $this->apiRsp(422, 'ID no existente');
+      }
+
+      $user = User::find($item->user_id);
+      $user->is_active = true;
+      $user->updated_by_id = $req->user()->id;
+      $user->save();
+
+      DB::commit();
+      return $this->apiRsp(
+        200,
+        'Registro activado correctamente',
+        ['item' => Teacher::getItem(null, $item->id)]
+      );
+    } catch (Throwable $err) {
+      DB::rollback();
+      return $this->apiRsp(500, null, $err);
+    }
+  }
+
   public function store(Request $req) {
     return $this->storeUpdate($req, null);
   }
@@ -72,16 +97,17 @@ class TeacherController extends Controller
   public function storeUpdate($req, $id) {
     DB::beginTransaction();
     try {
+      $user_data = json_decode($req->user);
+      // $user_data->role_id = 4;
       $email_current = null;
-      $email = GenController::filter($req->email, 'l');
-      $req->role_id = 4;
+      $email = GenController::filter($user_data->email, 'l');
 
-      $valid = User::validEmail(['email' => $email], $id);
+      $valid = User::validEmail(['email' => $email], $user_data->id);
       if ($valid->fails()) {
         return $this->apiRsp(422, $valid->errors()->first());
       }
 
-      $valid = User::valid($req->all());
+      $valid = User::valid((array) $user_data);
       if ($valid->fails()) {
         return $this->apiRsp(422, $valid->errors()->first());
       }
@@ -92,7 +118,7 @@ class TeacherController extends Controller
         $user = new User;
         $user->created_by_id = $req->user()->id;
         $user->updated_by_id = $req->user()->id;
-        
+
         $item = new Teacher;
       } else {
         $item = Teacher::find($id);
@@ -102,12 +128,30 @@ class TeacherController extends Controller
         $user->updated_by_id = $req->user()->id;
       }
 
-      $user = UserController::saveItem($user, $req);
+      $user = UserController::saveItem($user, $user_data);
       $item->user_id = $user->id;
       $item->save();
 
+      $user = User::find($user->id);
+      $user->curp_path = DocMgrController::save(
+        $req->curp_path,
+        DocMgrController::exist($req->user_curp_doc),
+        $req->curp_dlt,
+        'User'
+      );
+      $user->avatar_path = DocMgrController::save(
+        $req->avatar_path,
+        DocMgrController::exist($req->user_avatar_doc),
+        $req->avatar_dlt,
+        'User'
+      );
+
+      $user->save();
+
       if ($req->teacher_degrees) {
-        foreach ($req->teacher_degrees as $teacher_degree) {
+        $teacher_degrees = json_decode($req->teacher_degrees);
+        foreach ($teacher_degrees as $key => $teacher_degree) {
+          $teacher_degree = (array) $teacher_degree;
           $teacher_degree_item = TeacherDegree::find($teacher_degree['id']);
           if (!$teacher_degree_item) {
             $teacher_degree_item = new TeacherDegree;
@@ -117,8 +161,15 @@ class TeacherController extends Controller
           $teacher_degree_item->institution_name = GenController::filter($teacher_degree['institution_name'], 'U');
           $teacher_degree_item->name = GenController::filter($teacher_degree['name'], 'U');
           $teacher_degree_item->license_number = GenController::filter($teacher_degree['license_number'], 'U');
-          $teacher_degree_item->license_url = "---";
           $teacher_degree_item->teacher_id = $item->id;
+          $file_name = 'teacher_degrees_license_doc_' . $key;
+          $teacher_degree_item->license_path = DocMgrController::save(
+            $teacher_degree['license_path'],
+            DocMgrController::exist($req->$file_name),
+            $req->license_dlt,
+            'TeacherDegrees'
+          );
+          // $teacher_degree_item->license_path = "---";
           $teacher_degree_item->save();
         }
       }
@@ -136,6 +187,6 @@ class TeacherController extends Controller
   }
 
   public static function saveItem($item, $data, $is_req = true) {
-    
+
   }
 }

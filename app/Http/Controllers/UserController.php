@@ -58,6 +58,31 @@ class UserController extends Controller {
 
   }
 
+  public function restore(Request $req) {
+    DB::beginTransaction();
+    try {
+      $item = User::find($req->id);
+
+      if (!$item) {
+        return $this->apiRsp(422, 'ID no existente');
+      }
+
+      $item->is_active = true;
+      $item->updated_by_id = $req->user()->id;
+      $item->save();
+
+      DB::commit();
+      return $this->apiRsp(
+        200,
+        'Registro activado correctamente',
+        ['item' => User::getItem(null, $item->id)]
+      );
+    } catch (Throwable $err) {
+      DB::rollback();
+      return $this->apiRsp(500, null, $err);
+    }
+  }
+
   public function store(Request $req) {
     return $this->storeUpdate($req, null);
   }
@@ -104,19 +129,6 @@ class UserController extends Controller {
         EmailController::userAccountConfirmation($item->email, $item);
       }
 
-      if ($req->user_campuses) {
-        foreach ($req->user_campuses as $user_campus) {
-          $user_campus_item = UserCampus::find($user_campus['id']);
-          if (!$user_campus_item) {
-            $user_campus_item = new UserCampus;
-          }
-          $user_campus_item->is_active = GenController::filter($user_campus['is_active'], 'b');
-          $user_campus_item->campus_id = GenController::filter($user_campus['campus_id'], 'id');
-          $user_campus_item->user_id = $item->id;
-          $user_campus_item->save();
-        }
-      }
-
       DB::commit();
       return $this->apiRsp(
         $store_mode ? 201 : 200,
@@ -142,13 +154,37 @@ class UserController extends Controller {
     $item->email = GenController::filter($data->email, 'l');
     $item->role_id = GenController::filter($data->role_id, 'id');
     $item->marital_status_id = GenController::filter($data->marital_status_id, 'id');
-    $item->avatar_url = DocMgrController::save(
-      $data->avatar_url,
-      DocMgrController::exist($data->avatar_doc),
-      $data->avatar_dlt,
-      'User'
-    );
+    if (isset($item->curp_doc)) {
+      $item->curp_path = DocMgrController::save(
+        $data->curp_path,
+        DocMgrController::exist($data->curp_doc),
+        $data->curp_dlt,
+        'User'
+      );
+    }
+    if (isset($item->avatar_doc)) {
+      $item->avatar_path = DocMgrController::save(
+        $data->avatar_path,
+        DocMgrController::exist($data->avatar_doc),
+        $data->avatar_dlt,
+        'User'
+      );
+    }
     $item->save();
+
+    if ($data->user_campuses) {
+      foreach ($data->user_campuses as $user_campus) {
+        $user_campus = (array) $user_campus;
+        $user_campus_item = UserCampus::find($user_campus['id']);
+        if (!$user_campus_item) {
+          $user_campus_item = new UserCampus;
+        }
+        $user_campus_item->is_active = GenController::filter($user_campus['is_active'], 'b');
+        $user_campus_item->campus_id = GenController::filter($user_campus['campus_id'], 'id');
+        $user_campus_item->user_id = $item->id;
+        $user_campus_item->save();
+      }
+    }
 
     return $item;
   }

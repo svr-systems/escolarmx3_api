@@ -70,14 +70,14 @@ class Institution extends Model {
                 'name',
                 'code',
                 'cct',
-                'logo',
+                'logo_path',
             ]);
 
         if ($item) {
             $item->uiid = Institution::getUiid($item->id);
             $item->created_by = User::find($item->created_by_id, ['email']);
             $item->updated_by = User::find($item->updated_by_id, ['email']);
-            $item->logo_b64 = DocMgrController::getB64($item->logo, 'Institution');
+            $item->logo_b64 = DocMgrController::getB64($item->logo_path, 'Institutions');
             $item->logo_doc = null;
             $item->logo_dlt = false;
         }

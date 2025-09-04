@@ -28,7 +28,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/user', function (Request $request) {
-    return $request->user();
+  return $request->user();
 })->middleware('auth:api');
 
 Route::post('login', [AuthController::class, 'login']);
@@ -36,53 +36,87 @@ Route::post('login', [AuthController::class, 'login']);
 
 Route::group(['middleware' => 'auth:api'], function () {
 
-    //Catalogs
-    Route::get('roles', [RoleController::class, 'index']);
-    Route::get('states', [StateController::class, 'index']);
-    Route::get('municipalities', [MunicipalityController::class, 'index']);
-    Route::get('maritals_statuses', [MaritalStatusController::class, 'index']);
-    Route::get('levels', [LevelController::class, 'index']);
-    Route::get('accreditations', [AccreditationController::class, 'index']);
-    Route::get('modalities', [ModalityController::class, 'index']);
-    Route::get('shifts', [ShiftController::class, 'index']);
-    Route::get('terms', [TermController::class, 'index']);
-    Route::get('course_types', [CourseTypeCotroller::class, 'index']);
-    Route::get('kinships', [KinshipController::class, 'index']);
-    Route::get('document_types', [DocumentTypeController::class, 'index']);
+  //Catalogs
+  Route::get('roles', [RoleController::class, 'index']);
+  Route::get('states', [StateController::class, 'index']);
+  Route::get('municipalities', [MunicipalityController::class, 'index']);
+  Route::get('marital_statuses', [MaritalStatusController::class, 'index']);
+  Route::get('levels', [LevelController::class, 'index']);
+  Route::get('accreditations', [AccreditationController::class, 'index']);
+  Route::get('modalities', [ModalityController::class, 'index']);
+  Route::get('shifts', [ShiftController::class, 'index']);
+  Route::get('terms', [TermController::class, 'index']);
+  Route::get('course_types', [CourseTypeCotroller::class, 'index']);
+  Route::get('kinships', [KinshipController::class, 'index']);
+  Route::get('document_types', [DocumentTypeController::class, 'index']);
 
 
-    //Users
-    // Route::post('users/dni', [UserController::class, 'getDni']);
-    Route::apiResource('users', UserController::class);
+  //Users
+  // Route::post('users/dni', [UserController::class, 'getDni']);
+  Route::apiResource('users', UserController::class);
+  Route::group(['prefix' => 'users'], function () {
+    Route::post('restore', [UserController::class, 'restore']);
+  });
 
-    //Locations
-    Route::apiResource('institutions/campuses', CampusController::class);
+  //Institutions
+  Route::group(['prefix' => 'institutions'], function () {
+    //Campuses
+    Route::apiResource('campuses', CampusController::class);
+    Route::group(['prefix' => 'campuses'], function () {
+      Route::post('restore', [CampusController::class, 'restore']);
+    });
 
-    //Institutions
-    Route::apiResource('institutions', InstitutionContrller::class);
+    Route::post('restore', [InstitutionContrller::class, 'restore']);
+  });
+  Route::apiResource('institutions', InstitutionContrller::class);
 
-    //Teachers
-    Route::apiResource('teachers', TeacherController::class);
+  //Teachers
+  Route::apiResource('teachers', TeacherController::class);
+  Route::group(['prefix' => 'teachers'], function () {
+    Route::post('restore', [TeacherController::class, 'restore']);
+  });
 
+
+  //Programs
+  Route::group(['prefix' => 'programs'], function () {
     //Courses
-    Route::apiResource('programs/courses', CourseController::class);
+    Route::apiResource('courses', CourseController::class);
+    Route::group(['prefix' => 'courses'], function () {
+      Route::post('restore', [CourseController::class, 'restore']);
+    });
 
-    //Programs
-    Route::apiResource('programs', ProgramController::class);
+    Route::post('restore', [ProgramController::class, 'restore']);
+  });
+  Route::apiResource('programs', ProgramController::class);
 
-    //Cycles
-    Route::apiResource('cycles', CycleController::class);
+  //Cycles
+  Route::apiResource('cycles', CycleController::class);
+  Route::group(['prefix' => 'cycles'], function () {
+    Route::post('restore', [CycleController::class, 'restore']);
+  });
 
+  //Students
+  Route::group(['prefix' => 'students'], function () {
     //Student degrees
-    Route::apiResource('students/degrees', StudentDegreeController::class);
+    Route::apiResource('degrees', StudentDegreeController::class);
+    Route::group(['prefix' => 'degrees'], function () {
+      Route::post('restore', [StudentDegreeController::class, 'restore']);
+    });
 
     //Student documents
-    Route::apiResource('students/documents', StudentDocumentController::class);
+    Route::apiResource('documents', StudentDocumentController::class);
+    Route::group(['prefix' => 'documents'], function () {
+      Route::post('restore', [StudentDocumentController::class, 'restore']);
+    });
 
-    //Student programs
-    Route::apiResource('students/programs', StudentProgramController::class);
+    //Student documents
+    Route::apiResource('programs', StudentProgramController::class);
+    Route::group(['prefix' => 'programs'], function () {
+      Route::post('restore', [StudentProgramController::class, 'restore']);
+    });
 
-    //Students
-    Route::apiResource('students', StudentController::class);
+    Route::post('restore', [StudentController::class, 'restore']);
+  });
+  Route::apiResource('students', StudentController::class);
 
 });

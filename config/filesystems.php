@@ -88,6 +88,13 @@ return [
             'visibility' => 'public',
         ],
 
+        'TeacherDegrees' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private/Teachers/Degrees'),
+            'url' => env('APP_URL') . '/storage',
+            'visibility' => 'public',
+        ],
+
         'Students' => [
             'driver' => 'local',
             'root' => storage_path('app/private/Students'),

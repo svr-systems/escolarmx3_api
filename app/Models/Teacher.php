@@ -47,8 +47,8 @@ class Teacher extends Model {
     foreach ($items as $key => $item) {
       $item->key = $key;
       $item->uiid = Teacher::getUiid($item->id);
-      $item->user = User::find($item->user_id, ['name', 'surname_p', 'surname_m']);
-      $item->full_name = GenController::getFullName($item->user);
+      $item->user = User::find($item->user_id);
+      $item->user->full_name = GenController::getFullName($item->user);
     }
 
     return $items;
@@ -65,10 +65,15 @@ class Teacher extends Model {
       $item->uiid = Teacher::getUiid($item->id);
       $item->created_by = User::find($item->created_by_id, ['email']);
       $item->updated_by = User::find($item->updated_by_id, ['email']);
-      $item->user = User::find($item->user_id);
-      $item->user->avatar_b64 = DocMgrController::getB64($item->avatar_url, 'Users');
-      $item->user->avatar_doc = null;
-      $item->user->avatar_dlt = false;
+      $item->user = User::getItem(null,$item->user_id);
+
+      $item->teacher_degrees = TeacherDegree::where('is_active',true)->where('teacher_id',$item->id)->get();
+      foreach ($item->teacher_degrees as $key => $teacher_degree) {
+        $teacher_degree->license_b64 = DocMgrController::getB64($teacher_degree->license_path, 'TeacherDegrees');
+        $teacher_degree->license_doc = null;
+        $teacher_degree->license_dlt = false;
+        $teacher_degree->level = Level::find($teacher_degree->level_id,['name','code']);
+      }
     }
 
     return $item;

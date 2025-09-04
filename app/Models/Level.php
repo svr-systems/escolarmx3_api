@@ -5,13 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Level extends Model
-{
+class Level extends Model {
   use HasFactory;
   public $timestamps = false;
 
   static public function getItems($req) {
     $items = Level::
+      orderBy('name')->
       where('is_active', true)->
       get();
 

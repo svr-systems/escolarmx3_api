@@ -11,10 +11,11 @@ class role extends Model {
 
   static public function getItems($req) {
     $items = Role::
+      orderBy('name')->
       where('is_active', true);
 
     if ($req->user()->role_id !== 1) {
-      $items->where('id','>',3);
+      $items->where('id', '>', 3);
     }
 
     $items = $items->get([

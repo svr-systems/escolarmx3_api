@@ -57,6 +57,31 @@ class InstitutionContrller extends Controller {
 
   }
 
+  public function restore(Request $req) {
+    DB::beginTransaction();
+    try {
+      $item = Institution::find($req->id);
+
+      if (!$item) {
+        return $this->apiRsp(422, 'ID no existente');
+      }
+
+      $item->is_active = true;
+      $item->updated_by_id = $req->user()->id;
+      $item->save();
+
+      DB::commit();
+      return $this->apiRsp(
+        200,
+        'Registro activado correctamente',
+        ['item' => Institution::getItem(null, $item->id)]
+      );
+    } catch (Throwable $err) {
+      DB::rollback();
+      return $this->apiRsp(500, null, $err);
+    }
+  }
+
   public function store(Request $req) {
     return $this->storeUpdate($req, null);
   }
@@ -108,11 +133,11 @@ class InstitutionContrller extends Controller {
     $item->name = GenController::filter($data->name, 'U');
     $item->code = GenController::filter($data->code, 'U');
     $item->cct = GenController::filter($data->cct, 'U');
-    $item->logo = DocMgrController::save(
-      $data->logo,
+    $item->logo_path = DocMgrController::save(
+      $data->logo_path,
       DocMgrController::exist($data->logo_doc),
       $data->logo_dlt,
-      'Institution'
+      'Institutions'
     );
     $item->save();
 

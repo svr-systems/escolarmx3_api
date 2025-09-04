@@ -25,7 +25,7 @@ class Program extends Model {
       'accreditation_id' => 'required|numeric',
       'modality_id' => 'required|numeric',
       'shift_id' => 'required|numeric',
-      'responsible_curp' => 'min:2|max:18',
+      'responsible_curp' => 'nullable|min:2|max:18',
       'plan_year' => 'required|numeric',
       'level_id' => 'required|numeric',
       'term_id' => 'required|numeric',
@@ -50,10 +50,11 @@ class Program extends Model {
 
   static public function getItems($req) {
     $items = Program::
-    where('is_active', boolval($req->is_active));
+      where('campus_id', $req->campus_id)->
+      where('is_active', boolval($req->is_active));
 
     $items = $items->
-    get([
+      get([
         'id',
         'is_active',
         'name',
@@ -70,7 +71,7 @@ class Program extends Model {
 
   static public function getItem($req, $id) {
     $item = Program::
-    find($id, [
+      find($id, [
         'id',
         'is_active',
         'created_at',
@@ -98,11 +99,11 @@ class Program extends Model {
       $item->uiid = Program::getUiid($item->id);
       $item->created_by = User::find($item->created_by_id, ['email']);
       $item->updated_by = User::find($item->updated_by_id, ['email']);
-      $item->accreditation = User::find($item->accreditation_id);
-      $item->modality = User::find($item->modality_id);
-      $item->shift = User::find($item->shift_id);
-      $item->level = User::find($item->level_id);
-      $item->term = User::find($item->term_id);
+      $item->accreditation = Accreditation::find($item->accreditation_id,['name']);
+      $item->modality = Modality::find($item->modality_id,['name']);
+      $item->shift = Shift::find($item->shift_id,['name']);
+      $item->level = Level::find($item->level_id,['name']);
+      $item->term = Term::find($item->term_id,['name']);
     }
 
     return $item;

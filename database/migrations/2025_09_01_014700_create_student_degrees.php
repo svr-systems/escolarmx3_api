@@ -25,8 +25,8 @@ return new class extends Migration
             $table->date('start_at');
             $table->date('end_at');
             $table->string('license_number',20);
-            $table->string('license_path',50);
-            $table->string('certificate_path',50);
+            $table->string('license_path',50)->nullable();
+            $table->string('certificate_path',50)->nullable();
             $table->string('title_path',50)->nullable();
         });
     }

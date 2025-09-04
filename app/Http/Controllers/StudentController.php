@@ -59,6 +59,32 @@ class StudentController extends Controller {
 
   }
 
+  public function restore(Request $req) {
+    DB::beginTransaction();
+    try {
+      $item = Student::find($req->id);
+
+      if (!$item) {
+        return $this->apiRsp(422, 'ID no existente');
+      }
+
+      $user = User::find($item->user_id);
+      $user->is_active = true;
+      $user->updated_by_id = $req->user()->id;
+      $user->save();
+
+      DB::commit();
+      return $this->apiRsp(
+        200,
+        'Registro activado correctamente',
+        ['item' => Student::getItem(null, $item->id)]
+      );
+    } catch (Throwable $err) {
+      DB::rollback();
+      return $this->apiRsp(500, null, $err);
+    }
+  }
+
   public function store(Request $req) {
     return $this->storeUpdate($req, null);
   }
@@ -70,11 +96,12 @@ class StudentController extends Controller {
   public function storeUpdate($req, $id) {
     DB::beginTransaction();
     try {
+      $user_data = json_decode($req->user);
+      $user_data->role_id = 5;
       $email_current = null;
-      $email = GenController::filter($req->email, 'l');
-      $req->role_id = 4;
+      $email = GenController::filter($user_data->email, 'l');
 
-      $valid = User::validEmail(['email' => $email], $id);
+      $valid = User::validEmail(['email' => $email], $user_data->id);
       if ($valid->fails()) {
         return $this->apiRsp(422, $valid->errors()->first());
       }
@@ -103,6 +130,22 @@ class StudentController extends Controller {
       $user = UserController::saveItem($user, $req);
       $req->user_id = $user->id;
       $user = $this->saveItem($item, $req);
+      
+      $user = User::find($user->id);
+      $user->curp_path = DocMgrController::save(
+        $req->curp_path,
+        DocMgrController::exist($req->user_curp_doc),
+        $req->curp_dlt,
+        'User'
+      );
+      $user->avatar_path = DocMgrController::save(
+        $req->avatar_path,
+        DocMgrController::exist($req->user_avatar_doc),
+        $req->avatar_dlt,
+        'User'
+      );
+
+      $user->save();
 
       DB::commit();
       return $this->apiRsp(

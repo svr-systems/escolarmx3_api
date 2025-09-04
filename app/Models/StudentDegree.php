@@ -94,8 +94,8 @@ class StudentDegree extends Model
       $item->uiid = StudentDegree::getUiid($item->id);
       $item->created_by = User::find($item->created_by_id, ['email']);
       $item->updated_by = User::find($item->updated_by_id, ['email']);
-      $item->level = Level::find($item->level_id);
-      $item->municipality = Municipality::find($item->municipality_id);
+      $item->level = Level::find($item->level_id,['name']);
+      $item->municipality = Municipality::find($item->municipality_id,['name']);
       $item->license_b64 = DocMgrController::getB64($item->license_path, 'StudentDegrees');
       $item->license_doc = null;
       $item->license_dlt = false;

@@ -11,6 +11,7 @@ class Modality extends Model {
 
   static public function getItems($req) {
     $items = Modality::
+      orderBy('name')->
       where('is_active', true)->
       get();
 

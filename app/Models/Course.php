@@ -45,7 +45,8 @@ class Course extends Model {
   static public function getItems($req) {
     $items = Course::
     where('program_id',$req->program_id)->
-    where('is_active', boolval($req->is_active));
+    where('is_active', boolval($req->is_active))->
+    orderBy('code');
 
     $items = $items->
     get([
@@ -88,8 +89,8 @@ class Course extends Model {
       $item->created_by = User::find($item->created_by_id, ['email']);
       $item->updated_by = User::find($item->updated_by_id, ['email']);
       // $item->program = User::find($item->program_id);
-      $item->course_type = User::find($item->course_type_id);
-      $item->prerequisite_course = User::find($item->prerequisite_course_id);
+      $item->course_type = CourseType::find($item->course_type_id,['name']);
+      $item->prerequisite_course = Course::find($item->prerequisite_course_id);
     }
 
     return $item;

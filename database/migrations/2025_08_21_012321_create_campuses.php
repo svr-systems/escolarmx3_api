@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreignId('updated_by_id')->constrained('users');
             $table->foreignId('institution_id')->constrained('institutions');
             $table->string('name', 100);
-            $table->string('code', 8);
+            $table->string('code', 10);
             $table->foreignId('municipality_id')->constrained('municipalities');
         });
     }

@@ -54,7 +54,7 @@ class Student extends Model {
       $item->key = $key;
       $item->uiid = Student::getUiid($item->id);
       $item->user = User::find($item->user_id, ['name', 'surname_p', 'surname_m']);
-      $item->full_name = GenController::getFullName($item->user);
+      $item->user->full_name = GenController::getFullName($item->user);
     }
 
     return $items;
@@ -76,10 +76,11 @@ class Student extends Model {
       $item->uiid = Student::getUiid($item->id);
       $item->created_by = User::find($item->created_by_id, ['email']);
       $item->updated_by = User::find($item->updated_by_id, ['email']);
-      $item->user = User::find($item->user_id);
-      $item->user->birth_certificate_b64 = DocMgrController::getB64($item->birth_certificate_path, 'Studens');
-      $item->user->birth_certificate_doc = null;
-      $item->user->birth_certificate_dlt = false;
+      $item->user = User::getItem(null,$item->user_id);
+      $item->guardian_kinship = Kinship::find($item->guardian_kinship_id);
+      $item->birth_certificate_b64 = DocMgrController::getB64($item->birth_certificate_path, 'Studens');
+      $item->birth_certificate_doc = null;
+      $item->birth_certificate_dlt = false;
     }
 
     return $item;

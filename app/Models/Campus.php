@@ -8,8 +8,7 @@ use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 use Validator;
 
-class Campus extends Model
-{
+class Campus extends Model {
     protected function serializeDate(DateTimeInterface $date) {
         return Carbon::instance($date)->toISOString(true);
     }
@@ -40,11 +39,11 @@ class Campus extends Model
 
     static public function getItems($req) {
         $items = Campus::
-            where('institution_id',$req->institution_id)->
+            where('institution_id', $req->institution_id)->
             where('is_active', boolval($req->is_active));
 
         $items = $items->
-            get([
+        get([
                 'id',
                 'is_active',
                 'name',
@@ -55,7 +54,7 @@ class Campus extends Model
         foreach ($items as $key => $item) {
             $item->key = $key;
             $item->uiid = Campus::getUiid($item->id);
-            $item->municipality = Municipality::find($item->municipality_id, ['name','state_id']);
+            $item->municipality = Municipality::find($item->municipality_id, ['name', 'state_id']);
             $item->state = State::find($item->municipality->state_id, ['name']);
         }
 
@@ -64,7 +63,7 @@ class Campus extends Model
 
     static public function getItem($req, $id) {
         $item = Campus::
-            find($id, [
+        find($id, [
                 'id',
                 'is_active',
                 'created_at',
@@ -80,8 +79,8 @@ class Campus extends Model
             $item->uiid = Campus::getUiid($item->id);
             $item->created_by = User::find($item->created_by_id, ['email']);
             $item->updated_by = User::find($item->updated_by_id, ['email']);
-            $item->municipality = Municipality::find($item->municipality_id, ['name','state_id']);
-            $item->state = State::find($item->municipality->state_id, ['name','state_id']);
+            $item->municipality = Municipality::find($item->municipality_id, ['name', 'state_id']);
+            $item->municipality->state = State::find($item->municipality->state_id, ['name']);
         }
 
         return $item;

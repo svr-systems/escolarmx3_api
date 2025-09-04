@@ -58,6 +58,31 @@ class StudentDegreeController extends Controller
 
   }
 
+  public function restore(Request $req) {
+    DB::beginTransaction();
+    try {
+      $item = StudentDegree::find($req->id);
+
+      if (!$item) {
+        return $this->apiRsp(422, 'ID no existente');
+      }
+
+      $item->is_active = true;
+      $item->updated_by_id = $req->user()->id;
+      $item->save();
+
+      DB::commit();
+      return $this->apiRsp(
+        200,
+        'Registro activado correctamente',
+        ['item' => StudentDegree::getItem(null, $item->id)]
+      );
+    } catch (Throwable $err) {
+      DB::rollback();
+      return $this->apiRsp(500, null, $err);
+    }
+  }
+
   public function store(Request $req) {
     return $this->storeUpdate($req, null);
   }
