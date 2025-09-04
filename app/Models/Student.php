@@ -53,7 +53,7 @@ class Student extends Model {
     foreach ($items as $key => $item) {
       $item->key = $key;
       $item->uiid = Student::getUiid($item->id);
-      $item->user = User::find($item->user_id, ['name', 'surname_p', 'surname_m']);
+      $item->user = User::find($item->user_id, ['name', 'surname_p', 'surname_m', 'curp']);
       $item->user->full_name = GenController::getFullName($item->user);
     }
 
