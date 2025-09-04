@@ -22,7 +22,7 @@ class StudentDocument extends Model {
       'student_id' => 'required|numeric',
       'received_at' => 'required|date',
       'document_type_id' => 'required|numeric',
-      'is_original_left' => 'required|boolean',
+      'is_original_left' => 'required|in:true,false,1,0',
       'copies_count' => 'required|numeric',
     ];
 
