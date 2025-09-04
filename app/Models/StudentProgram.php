@@ -22,7 +22,7 @@ class StudentProgram extends Model {
       'student_id' => 'required|numeric',
       'program_id' => 'required|numeric',
       'cycle_entry_id' => 'required|numeric',
-      'is_equivalency' => 'required|boolean',
+      'is_equivalency' => 'required|in:true,false,1,0',
       'cycle_dropout_id' => 'nullable|numeric',
       'cycle_reentry_id' => 'nullable|numeric',
       'cycle_graduated_id' => 'nullable|numeric',
@@ -50,13 +50,16 @@ class StudentProgram extends Model {
     get([
         'id',
         'is_active',
+        'program_id',
+        'cycle_entry_id',
         'is_equivalency',
       ]);
 
     foreach ($items as $key => $item) {
       $item->key = $key;
+      $item->program = Program::find($item->program_id, ['name']);
+      $item->cycle_entry = Cycle::find($item->cycle_entry_id, ['code']);
       $item->uiid = StudentProgram::getUiid($item->id);
-      $item->document_type = DocumentType::find($item->document_type_id);
     }
 
     return $items;
