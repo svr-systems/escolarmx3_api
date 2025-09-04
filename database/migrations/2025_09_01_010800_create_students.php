@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users');
             $table->string('student_number', 15)->nullable();
-            $table->foreignId('guardian_kinship_id')->constrained('kinships');
-            $table->string('guardian_name',100);
-            $table->string('guardian_phone',15);
+            $table->foreignId('guardian_kinship_id')->nullable()->constrained('kinships');
+            $table->string('guardian_name',100)->nullable();
+            $table->string('guardian_phone',15)->nullable();
             $table->string('birth_certificate_path',50)->nullable();
         });
     }

@@ -98,20 +98,20 @@ Route::group(['middleware' => 'auth:api'], function () {
   //Students
   Route::group(['prefix' => 'students'], function () {
     //Student degrees
-    Route::apiResource('degrees', StudentDegreeController::class);
-    Route::group(['prefix' => 'degrees'], function () {
+    Route::apiResource('student_degrees', StudentDegreeController::class);
+    Route::group(['prefix' => 'student_degrees'], function () {
       Route::post('restore', [StudentDegreeController::class, 'restore']);
     });
 
     //Student documents
-    Route::apiResource('documents', StudentDocumentController::class);
-    Route::group(['prefix' => 'documents'], function () {
+    Route::apiResource('student_documents', StudentDocumentController::class);
+    Route::group(['prefix' => 'student_documents'], function () {
       Route::post('restore', [StudentDocumentController::class, 'restore']);
     });
 
     //Student documents
-    Route::apiResource('programs', StudentProgramController::class);
-    Route::group(['prefix' => 'programs'], function () {
+    Route::apiResource('student_programs', StudentProgramController::class);
+    Route::group(['prefix' => 'student_programs'], function () {
       Route::post('restore', [StudentProgramController::class, 'restore']);
     });
 

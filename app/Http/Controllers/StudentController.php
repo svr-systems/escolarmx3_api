@@ -106,7 +106,7 @@ class StudentController extends Controller {
         return $this->apiRsp(422, $valid->errors()->first());
       }
 
-      $valid = User::valid($req->all());
+      $valid = User::valid((array) $user_data);
       if ($valid->fails()) {
         return $this->apiRsp(422, $valid->errors()->first());
       }
@@ -127,21 +127,21 @@ class StudentController extends Controller {
         $user->updated_by_id = $req->user()->id;
       }
 
-      $user = UserController::saveItem($user, $req);
+      $user = UserController::saveItem($user, $user_data);
       $req->user_id = $user->id;
-      $user = $this->saveItem($item, $req);
+      $this->saveItem($item, $req);
       
       $user = User::find($user->id);
       $user->curp_path = DocMgrController::save(
-        $req->curp_path,
+        $user_data->curp_path,
         DocMgrController::exist($req->user_curp_doc),
-        $req->curp_dlt,
+        $user_data->curp_dlt,
         'User'
       );
       $user->avatar_path = DocMgrController::save(
-        $req->avatar_path,
+        $user_data->avatar_path,
         DocMgrController::exist($req->user_avatar_doc),
-        $req->avatar_dlt,
+        $user_data->avatar_dlt,
         'User'
       );
 

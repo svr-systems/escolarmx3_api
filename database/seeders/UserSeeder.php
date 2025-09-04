@@ -21,6 +21,7 @@ class UserSeeder extends Seeder {
         'name' => 'ADMIN',
         'surname_p' => 'SISTEMA',
         'email' => 'admin@svr.com',
+        'curp' => 'aaaaaaaaaaaaaaaaaa',
         'password' => bcrypt('Svr_1029*'),
         'role_id' => 1,
         'marital_status_id' => 1,

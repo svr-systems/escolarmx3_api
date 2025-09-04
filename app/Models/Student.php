@@ -16,9 +16,9 @@ class Student extends Model {
     $rules = [
       'user_id' => 'required|numeric',
       'student_number' => 'nullable|min:2|max:15',
-      'guardian_kinship_id' => 'required|numeric',
-      'guardian_name' => 'required|min:2|max:100',
-      'guardian_phone' => 'required|min:2|max:15',
+      'guardian_kinship_id' => 'nullable|numeric',
+      'guardian_name' => 'nullable|min:2|max:100',
+      'guardian_phone' => 'nullable|min:2|max:15',
     ];
 
     if (!$is_req) {
@@ -78,7 +78,7 @@ class Student extends Model {
       $item->updated_by = User::find($item->updated_by_id, ['email']);
       $item->user = User::getItem(null,$item->user_id);
       $item->guardian_kinship = Kinship::find($item->guardian_kinship_id);
-      $item->birth_certificate_b64 = DocMgrController::getB64($item->birth_certificate_path, 'Studens');
+      $item->birth_certificate_b64 = DocMgrController::getB64($item->birth_certificate_path, 'Students');
       $item->birth_certificate_doc = null;
       $item->birth_certificate_dlt = false;
     }
