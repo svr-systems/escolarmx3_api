@@ -7,7 +7,6 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CourseTypeCotroller;
 use App\Http\Controllers\CycleController;
 use App\Http\Controllers\DocumentTypeController;
-use App\Http\Controllers\InstitutionContrller;
 use App\Http\Controllers\KinshipController;
 use App\Http\Controllers\LevelController;
 use App\Http\Controllers\MaritalStatusController;
@@ -15,6 +14,7 @@ use App\Http\Controllers\ModalityController;
 use App\Http\Controllers\MunicipalityController;
 use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SettingContrller;
 use App\Http\Controllers\ShiftController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\StudentController;
@@ -66,9 +66,9 @@ Route::group(['middleware' => 'auth:api'], function () {
       Route::post('restore', [CampusController::class, 'restore']);
     });
 
-    Route::post('restore', [InstitutionContrller::class, 'restore']);
+    Route::post('restore', [SettingContrller::class, 'restore']);
   });
-  Route::apiResource('institutions', InstitutionContrller::class);
+  Route::apiResource('settings', SettingContrller::class);
 
   //Teachers
   Route::apiResource('teachers', TeacherController::class);

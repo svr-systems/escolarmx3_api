@@ -3,17 +3,17 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Institution;
+use App\Models\Setting;
 use Throwable;
 use DB;
 
-class InstitutionContrller extends Controller {
+class SettingContrller extends Controller {
   public function index(Request $req) {
     try {
       return $this->apiRsp(
         200,
         'Registros retornados correctamente',
-        ['items' => Institution::getItems($req)]
+        ['items' => Setting::getItems($req)]
       );
     } catch (Throwable $err) {
       return $this->apiRsp(500, null, $err);
@@ -25,7 +25,7 @@ class InstitutionContrller extends Controller {
       return $this->apiRsp(
         200,
         'Registro retornado correctamente',
-        ['item' => Institution::getItem($req, $id)]
+        ['item' => Setting::getItem($req, $id)]
       );
     } catch (Throwable $err) {
       return $this->apiRsp(500, null, $err);
@@ -35,7 +35,7 @@ class InstitutionContrller extends Controller {
   public function destroy(Request $req, $id) {
     DB::beginTransaction();
     try {
-      $item = Institution::find($id);
+      $item = Setting::find($id);
 
       if (!$item) {
         return $this->apiRsp(422, 'ID no existente');
@@ -60,7 +60,7 @@ class InstitutionContrller extends Controller {
   public function restore(Request $req) {
     DB::beginTransaction();
     try {
-      $item = Institution::find($req->id);
+      $item = Setting::find($req->id);
 
       if (!$item) {
         return $this->apiRsp(422, 'ID no existente');
@@ -74,7 +74,7 @@ class InstitutionContrller extends Controller {
       return $this->apiRsp(
         200,
         'Registro activado correctamente',
-        ['item' => Institution::getItem(null, $item->id)]
+        ['item' => Setting::getItem(null, $item->id)]
       );
     } catch (Throwable $err) {
       DB::rollback();
@@ -94,7 +94,7 @@ class InstitutionContrller extends Controller {
     DB::beginTransaction();
     try {
 
-      $valid = Institution::valid($req->all());
+      $valid = Setting::valid($req->all());
 
       if ($valid->fails()) {
         return $this->apiRsp(422, $valid->errors()->first());
@@ -103,11 +103,11 @@ class InstitutionContrller extends Controller {
       $store_mode = is_null($id);
 
       if ($store_mode) {
-        $item = new Institution;
+        $item = new Setting;
         $item->created_by_id = $req->user()->id;
         $item->updated_by_id = $req->user()->id;
       } else {
-        $item = Institution::find($id);
+        $item = Setting::find($id);
         $item->updated_by_id = $req->user()->id;
       }
 
@@ -137,7 +137,7 @@ class InstitutionContrller extends Controller {
       $data->logo_path,
       DocMgrController::exist($data->logo_doc),
       $data->logo_dlt,
-      'Institutions'
+      'Settings'
     );
     $item->save();
 

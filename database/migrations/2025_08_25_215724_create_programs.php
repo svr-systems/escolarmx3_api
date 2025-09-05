@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->boolean('is_active')->default(1);
             $table->timestamps();
-            $table->foreignId('created_by_id')->nullable()->constrained('users');
-            $table->foreignId('updated_by_id')->nullable()->constrained('users');
-            $table->foreignId('campus_id')->nullable()->constrained('campuses');
+            $table->foreignId('created_by_id')->constrained('users');
+            $table->foreignId('updated_by_id')->constrained('users');
+            $table->foreignId('campus_id')->constrained('campuses');
             $table->string('name',100);
             $table->string('code', 10)->unique();
             $table->date('issued_at');

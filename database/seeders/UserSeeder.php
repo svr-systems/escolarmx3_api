@@ -23,8 +23,8 @@ class UserSeeder extends Seeder {
         'email' => 'admin@svr.com',
         'curp' => 'aaaaaaaaaaaaaaaaaa',
         'password' => bcrypt('Svr_1029*'),
-        'role_id' => 1,
         'marital_status_id' => 1,
+        'role_id' => 1,
       ],
     ];
 

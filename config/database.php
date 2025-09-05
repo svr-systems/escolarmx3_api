@@ -18,7 +18,8 @@ return [
 
     // 'default' => env('DB_CONNECTION', 'sqlite'),
     // 'default' => 'bonampakapi.escolarmx.net',
-    'default' => $_SERVER['SERVER_NAME'],
+    'default' => 'apidev.escolarmx.net',
+    // 'default' => $_SERVER['SERVER_NAME'],
 
     /*
     |--------------------------------------------------------------------------

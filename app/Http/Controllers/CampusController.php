@@ -132,7 +132,6 @@ class CampusController extends Controller {
 
     $item->name = GenController::filter($data->name, 'U');
     $item->code = GenController::filter($data->code, 'U');
-    $item->institution_id = GenController::filter($data->institution_id, 'id');
     $item->municipality_id = GenController::filter($data->municipality_id, 'id');
     $item->save();
 

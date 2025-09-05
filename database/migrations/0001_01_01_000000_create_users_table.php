@@ -21,11 +21,15 @@ return new class extends Migration {
             $table->string('surname_p', 25);
             $table->string('surname_m', 25)->nullable();
             $table->string('curp', 18);
-            $table->string('curp_path', 50)->nullable();
-            $table->string('phone', 15)->nullable();
-            $table->string('avatar_path', 50)->nullable();
             $table->string('email')->unique();
+            $table->string('phone', 15)->nullable();
             $table->string('password',60)->nullable()->default(null);
+            $table->string('avatar_path', 50)->nullable();
+            $table->string('curp_path', 50)->nullable();
+            $table->string('birth_certificate_path',50)->nullable();
+            $table->string('ine_path',50)->nullable();
+            $table->string('contact_name',100)->nullable();
+            $table->string('contact_phone',15)->nullable();
             $table->rememberToken();
         });
 

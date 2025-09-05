@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Campus;
-use App\Models\Institution;
 use App\Models\User;
 use App\Models\UserCampus;
 use Illuminate\Http\Request;
@@ -37,14 +35,10 @@ class AuthController extends Controller {
       // }
 
       $campus_id = null;
-      $institution_id = null;
       $user_campuses = UserCampus::getUserCampuses(Auth::id());
 
       if ($user->role_id === 2) {
         $campus_id = ($user_campuses) ? $user_campuses[0]->campus_id : null;
-        $campus = Campus::find($campus_id, ['institution_id']);
-        $institution = Institution::find($campus->institution_id, ['id']);
-        $institution_id = $institution->id;
       }
 
 
@@ -57,8 +51,7 @@ class AuthController extends Controller {
             'token' => Auth::user()->createToken('passportToken')->accessToken,
             'user' => User::getItemAuth(Auth::id()),
             'user_campuses' => $user_campuses,
-            'campus_id' => $campus_id,
-            'institution_id' => $institution_id
+            'campus_id' => $campus_id
           ]
         ]
       );

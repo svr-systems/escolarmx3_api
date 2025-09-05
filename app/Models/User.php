@@ -34,13 +34,16 @@ class User extends Authenticatable {
 
   public static function valid($data, $is_req = true) {
     $rules = [
+      'role_id' => 'required|numeric',
       'name' => 'required|min:2|max:50',
       'surname_p' => 'required|min:2|max:25',
       'surname_m' => 'nullable|min:2|max:25',
       'curp' => 'required|min:18|max:18',
-      'role_id' => 'required|numeric',
-      'marital_status_id' => 'required|numeric',
       'phone' => 'nullable|min:10|max:10',
+      'marital_status_id' => 'required|numeric',
+      'contact_kinship_id' => 'nullable|numeric',
+      'contact_name' => 'nullable|min:2|max:100',
+      'contact_phone' => 'nullable|min:10|max:15',
     ];
 
     if (!$is_req) {
@@ -95,11 +98,11 @@ class User extends Authenticatable {
       get([
         'id',
         'is_active',
+        'role_id',
         'name',
         'surname_p',
         'surname_m',
         'email',
-        'role_id',
         'email_verified_at',
       ]);
 
@@ -123,16 +126,21 @@ class User extends Authenticatable {
         'created_by_id',
         'updated_by_id',
         'email_verified_at',
+        'role_id',
         'name',
         'surname_p',
         'surname_m',
-        'email',
         'curp',
-        'curp_path',
+        'email',
         'phone',
-        'role_id',
         'marital_status_id',
         'avatar_path',
+        'curp_path',
+        'birth_certificate_path',
+        'ine_path',
+        'contact_kinship_id',
+        'contact_name',
+        'contact_phone',
       ]);
 
     if ($item) {
@@ -142,12 +150,19 @@ class User extends Authenticatable {
       $item->full_name = GenController::getFullName($item);
       $item->role = Role::find($item->role_id, ['name']);
       $item->marital_status = MaritalStatus::find($item->marital_status_id, ['name']);
+      $item->contact_kinship_id = Kinship::find($item->contact_kinship_id_id, ['name']);
       $item->avatar_b64 = DocMgrController::getB64($item->avatar_path, 'User');
       $item->avatar_doc = null;
       $item->avatar_dlt = false;
       $item->curp_b64 = DocMgrController::getB64($item->curp_path, 'User');
       $item->curp_doc = null;
       $item->curp_dlt = false;
+      $item->birth_certificate_b64 = DocMgrController::getB64($item->birth_certificate_path, 'User');
+      $item->birth_certificate_doc = null;
+      $item->birth_certificate_dlt = false;
+      $item->ine_b64 = DocMgrController::getB64($item->ine_path, 'User');
+      $item->ine_doc = null;
+      $item->ine_dlt = false;
       $item->user_campuses = UserCampus::where('is_active',true)->where('user_id',$item->id)->get();
 
       foreach ($item->user_campuses as $key => $user_campus) {

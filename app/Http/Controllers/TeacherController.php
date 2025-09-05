@@ -98,7 +98,7 @@ class TeacherController extends Controller {
     DB::beginTransaction();
     try {
       $user_data = json_decode($req->user);
-      // $user_data->role_id = 4;
+      $user_data->role_id = 4;
       $email_current = null;
       $email = GenController::filter($user_data->email, 'l');
 
@@ -130,23 +130,17 @@ class TeacherController extends Controller {
 
       $user = UserController::saveItem($user, $user_data);
       $item->user_id = $user->id;
-      $item->save();
 
       $user = User::find($user->id);
-      $user->curp_path = DocMgrController::save(
-        $req->curp_path,
-        DocMgrController::exist($req->user_curp_doc),
-        $req->curp_dlt,
-        'User'
-      );
-      $user->avatar_path = DocMgrController::save(
-        $req->avatar_path,
-        DocMgrController::exist($req->user_avatar_doc),
-        $req->avatar_dlt,
-        'User'
-      );
+      UserController::saveDocuments($user, $req, 'user_');
 
-      $user->save();
+      $item->cv_path = DocMgrController::save(
+        $req->cv_path,
+        DocMgrController::exist($req->cv_doc),
+        $req->cv_dlt,
+        'Teachers'
+      );
+      $item->save();
 
       if ($req->teacher_degrees) {
         $teacher_degrees = json_decode($req->teacher_degrees);

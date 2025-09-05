@@ -19,7 +19,8 @@ return new class extends Migration
             $table->string('institution_name', 100);
             $table->string('name', 100);
             $table->string('license_number', 20);
-            $table->string('license_path', 50)->nullable();
+            $table->string('license_path', 50);
+            $table->string('title_path', 50)->nullable();
         });
     }
 

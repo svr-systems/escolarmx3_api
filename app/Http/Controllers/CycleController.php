@@ -131,7 +131,6 @@ class CycleController extends Controller
       $item->active = GenController::filter($data->active, 'b');
     }
 
-    $item->institution_id = GenController::filter($data->institution_id, 'id');
     $item->code = GenController::filter($data->code, 'U');
     $item->term_id = GenController::filter($data->term_id, 'id');
     $item->ops_start_at = GenController::filter($data->ops_start_at, 'd');

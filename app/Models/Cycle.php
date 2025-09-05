@@ -19,7 +19,6 @@ class Cycle extends Model
 
     public static function valid($data, $is_req = true) {
         $rules = [
-            'institution_id' => 'required|numeric',
             'code' => 'required|min:2|max:10',
             'term_id' => 'required|numeric',
             'ops_start_at' => 'required|date',

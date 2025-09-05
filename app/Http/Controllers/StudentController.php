@@ -132,20 +132,7 @@ class StudentController extends Controller {
       $this->saveItem($item, $req);
       
       $user = User::find($user->id);
-      $user->curp_path = DocMgrController::save(
-        $user_data->curp_path,
-        DocMgrController::exist($req->user_curp_doc),
-        $user_data->curp_dlt,
-        'User'
-      );
-      $user->avatar_path = DocMgrController::save(
-        $user_data->avatar_path,
-        DocMgrController::exist($req->user_avatar_doc),
-        $user_data->avatar_dlt,
-        'User'
-      );
-
-      $user->save();
+      UserController::saveDocuments($user, $req, 'user_');
 
       DB::commit();
       return $this->apiRsp(
@@ -166,15 +153,6 @@ class StudentController extends Controller {
 
     $item->user_id = GenController::filter($data->user_id, 'id');
     $item->student_number = GenController::filter($data->student_number, 'U');
-    $item->guardian_kinship_id = GenController::filter($data->guardian_kinship_id, 'id');
-    $item->guardian_name = GenController::filter($data->guardian_name, 'U');
-    $item->guardian_phone = GenController::filter($data->guardian_phone, 'U');
-    $item->birth_certificate_path = DocMgrController::save(
-      $data->birth_certificate_path,
-      DocMgrController::exist($data->birth_certificate_doc),
-      $data->birth_certificate_dlt,
-      'Students'
-    );
     $item->save();
 
     return $item;

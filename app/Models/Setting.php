@@ -8,7 +8,7 @@ use Carbon\Carbon;
 use DateTimeInterface;
 use Validator;
 
-class Institution extends Model {
+class Setting extends Model {
     protected function serializeDate(DateTimeInterface $date) {
         return Carbon::instance($date)->toISOString(true);
     }
@@ -38,7 +38,7 @@ class Institution extends Model {
     }
 
     static public function getItems($req) {
-        $items = Institution::
+        $items = Setting::
             where('is_active', boolval($req->is_active));
 
         $items = $items->
@@ -52,14 +52,14 @@ class Institution extends Model {
 
         foreach ($items as $key => $item) {
             $item->key = $key;
-            $item->uiid = Institution::getUiid($item->id);
+            $item->uiid = Setting::getUiid($item->id);
         }
 
         return $items;
     }
 
     static public function getItem($req, $id) {
-        $item = Institution::
+        $item = Setting::
             find($id, [
                 'id',
                 'is_active',
@@ -74,10 +74,10 @@ class Institution extends Model {
             ]);
 
         if ($item) {
-            $item->uiid = Institution::getUiid($item->id);
+            $item->uiid = Setting::getUiid($item->id);
             $item->created_by = User::find($item->created_by_id, ['email']);
             $item->updated_by = User::find($item->updated_by_id, ['email']);
-            $item->logo_b64 = DocMgrController::getB64($item->logo_path, 'Institutions');
+            $item->logo_b64 = DocMgrController::getB64($item->logo_path, 'Settings');
             $item->logo_doc = null;
             $item->logo_dlt = false;
         }

@@ -122,6 +122,8 @@ class UserController extends Controller {
 
       $item = $this->saveItem($item, $req);
 
+      $this->saveDocuments($item,$req);
+
       if ($email_current != $email) {
         $item->email_verified_at = null;
         $item->save();
@@ -146,30 +148,16 @@ class UserController extends Controller {
       $item->active = GenController::filter($data->active, 'b');
     }
 
+    $item->role_id = GenController::filter($data->role_id, 'id');
     $item->name = GenController::filter($data->name, 'U');
     $item->surname_p = GenController::filter($data->surname_p, 'U');
     $item->surname_m = GenController::filter($data->surname_m, 'U');
     $item->curp = GenController::filter($data->curp, 'U');
-    $item->phone = GenController::filter($data->phone, 'U');
     $item->email = GenController::filter($data->email, 'l');
-    $item->role_id = GenController::filter($data->role_id, 'id');
+    $item->phone = GenController::filter($data->phone, 'U');
     $item->marital_status_id = GenController::filter($data->marital_status_id, 'id');
-    if (isset($item->curp_doc)) {
-      $item->curp_path = DocMgrController::save(
-        $data->curp_path,
-        DocMgrController::exist($data->curp_doc),
-        $data->curp_dlt,
-        'User'
-      );
-    }
-    if (isset($item->avatar_doc)) {
-      $item->avatar_path = DocMgrController::save(
-        $data->avatar_path,
-        DocMgrController::exist($data->avatar_doc),
-        $data->avatar_dlt,
-        'User'
-      );
-    }
+    $item->contact_name = GenController::filter($data->contact_name, 'U');
+    $item->contact_phone = GenController::filter($data->contact_phone, 'U');
     $item->save();
 
     if ($data->user_campuses) {
@@ -204,5 +192,40 @@ class UserController extends Controller {
     } catch (Throwable $err) {
       return $this->apiRsp(500, null, $err);
     }
+  }
+
+  public static function saveDocuments($item, $data,$prefix = '') {
+    $avatar_doc = $prefix . 'avatar_doc';
+    $item->avatar_path = DocMgrController::save(
+      $data->avatar_path,
+      DocMgrController::exist($data->$avatar_doc),
+      $data->avatar_dlt,
+      'User'
+    );
+
+    $curp_doc = $prefix . 'curp_doc';
+    $item->curp_path = DocMgrController::save(
+      $data->curp_path,
+      DocMgrController::exist($data->$curp_doc),
+      $data->curp_dlt,
+      'User'
+    );
+    
+    $birth_certificate_doc = $prefix . 'birth_certificate_doc';
+    $item->birth_certificate_path = DocMgrController::save(
+      $data->birth_certificate_path,
+      DocMgrController::exist($data->$birth_certificate_doc),
+      $data->birth_certificate_dlt,
+      'User'
+    );
+    
+    $ine_doc = $prefix . 'ine_doc';
+    $item->ine_path = DocMgrController::save(
+      $data->ine_path,
+      DocMgrController::exist($data->$ine_doc),
+      $data->ine_dlt,
+      'User'
+    );
+    $item->save();
   }
 }

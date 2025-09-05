@@ -15,11 +15,11 @@ return new class extends Migration
             $table->id();
             $table->boolean('is_active')->default(1);
             $table->timestamps();
-            $table->foreignId('created_by_id')->nullable()->constrained('users');
-            $table->foreignId('updated_by_id')->nullable()->constrained('users');
-            $table->foreignId('program_id')->nullable()->constrained('programs');
+            $table->foreignId('created_by_id')->constrained('users');
+            $table->foreignId('updated_by_id')->constrained('users');
+            $table->foreignId('program_id')->constrained('programs');
             $table->string('name',100);
-            $table->foreignId('course_type_id')->nullable()->constrained('course_types');
+            $table->foreignId('course_type_id')->constrained('course_types');
             $table->string('code', 10)->unique();
             $table->string('alt_code', 10)->unique()->nullable();
             $table->decimal('credits',5,2);

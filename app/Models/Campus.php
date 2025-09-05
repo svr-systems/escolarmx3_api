@@ -39,7 +39,6 @@ class Campus extends Model {
 
     static public function getItems($req) {
         $items = Campus::
-            where('institution_id', $req->institution_id)->
             where('is_active', boolval($req->is_active));
 
         $items = $items->
