@@ -50,20 +50,25 @@ class Program extends Model {
 
   static public function getItems($req) {
     $items = Program::
-      where('campus_id', $req->campus_id)->
+      // where('campus_id', $req->campus_id)->   AJUSTAR DESPUES
       where('is_active', boolval($req->is_active));
 
     $items = $items->
+      orderBy('campus_id')->
+      orderBy('name')->
       get([
         'id',
         'is_active',
         'name',
         'code',
+        'plan_year',
+        'campus_id' //QUITAR DESPUES
       ]);
 
     foreach ($items as $key => $item) {
       $item->key = $key;
-      $item->uiid = Program::getUiid($item->id);
+      // $item->uiid = Program::getUiid($item->id);
+      $item->campus = Campus::find($item->campus_id, ['name']); //QUITAR DESPUES
     }
 
     return $items;
@@ -104,6 +109,8 @@ class Program extends Model {
       $item->shift = Shift::find($item->shift_id,['name']);
       $item->level = Level::find($item->level_id,['name']);
       $item->term = Term::find($item->term_id,['name']);
+      
+      $item->campus = Campus::find($item->campus_id, ['name']); //QUITAR DESPUES
     }
 
     return $item;

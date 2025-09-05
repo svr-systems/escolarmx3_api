@@ -58,24 +58,14 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('restore', [UserController::class, 'restore']);
   });
 
-  //Institutions
-  Route::group(['prefix' => 'institutions'], function () {
-    //Campuses
-    Route::apiResource('campuses', CampusController::class);
-    Route::group(['prefix' => 'campuses'], function () {
-      Route::post('restore', [CampusController::class, 'restore']);
-    });
-
-    Route::post('restore', [SettingContrller::class, 'restore']);
-  });
+  //Settings
   Route::apiResource('settings', SettingContrller::class);
 
-  //Teachers
-  Route::apiResource('teachers', TeacherController::class);
-  Route::group(['prefix' => 'teachers'], function () {
-    Route::post('restore', [TeacherController::class, 'restore']);
+  //Campuses
+  Route::apiResource('campuses', CampusController::class);
+  Route::group(['prefix' => 'campuses'], function () {
+    Route::post('restore', [CampusController::class, 'restore']);
   });
-
 
   //Programs
   Route::group(['prefix' => 'programs'], function () {
@@ -88,6 +78,12 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('restore', [ProgramController::class, 'restore']);
   });
   Route::apiResource('programs', ProgramController::class);
+
+  //Teachers
+  Route::apiResource('teachers', TeacherController::class);
+  Route::group(['prefix' => 'teachers'], function () {
+    Route::post('restore', [TeacherController::class, 'restore']);
+  });
 
   //Cycles
   Route::apiResource('cycles', CycleController::class);
@@ -118,5 +114,4 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('restore', [StudentController::class, 'restore']);
   });
   Route::apiResource('students', StudentController::class);
-
 });

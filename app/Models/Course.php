@@ -53,12 +53,16 @@ class Course extends Model {
         'id',
         'is_active',
         'name',
+        'course_type_id',
         'code',
+        'alt_code',
+        'credits',
       ]);
 
     foreach ($items as $key => $item) {
       $item->key = $key;
-      $item->uiid = Course::getUiid($item->id);
+      $item->course_type = CourseType::find($item->course_type_id, ['name']);
+      // $item->uiid = Course::getUiid($item->id);
     }
 
     return $items;

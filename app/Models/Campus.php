@@ -34,7 +34,7 @@ class Campus extends Model {
     }
 
     static public function getUiid($id) {
-        return 'E-' . str_pad($id, 4, '0', STR_PAD_LEFT);
+        return 'C-' . str_pad($id, 4, '0', STR_PAD_LEFT);
     }
 
     static public function getItems($req) {
@@ -52,9 +52,9 @@ class Campus extends Model {
 
         foreach ($items as $key => $item) {
             $item->key = $key;
-            $item->uiid = Campus::getUiid($item->id);
+            // $item->uiid = Campus::getUiid($item->id);
             $item->municipality = Municipality::find($item->municipality_id, ['name', 'state_id']);
-            $item->state = State::find($item->municipality->state_id, ['name']);
+            $item->municipality->state = State::find($item->municipality->state_id, ['name']);
         }
 
         return $items;
