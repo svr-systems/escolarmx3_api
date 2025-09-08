@@ -94,6 +94,11 @@ class CourseController extends Controller {
     DB::beginTransaction();
     try {
 
+      $valid = Course::validCode(['code' => $req->code,'alt_code' => $req->alt_code], $id);
+      if ($valid->fails()) {
+        return $this->apiRsp(422, $valid->errors()->first());
+      }
+
       $valid = Course::valid($req->all());
 
       if ($valid->fails()) {

@@ -43,6 +43,7 @@ class Program extends Model {
 
     return Validator::make($data, $rules, $msgs);
   }
+  
   public static function validCode($data, $id) {
     $rules = ['code' => 'unique:programs,code,' . $id];
 

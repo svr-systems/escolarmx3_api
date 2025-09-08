@@ -94,6 +94,11 @@ class CampusController extends Controller {
     DB::beginTransaction();
     try {
 
+      $valid = Campus::validCode(['code' => $req->code], $id);
+      if ($valid->fails()) {
+        return $this->apiRsp(422, $valid->errors()->first());
+      }
+
       $valid = Campus::valid($req->all());
 
       if ($valid->fails()) {

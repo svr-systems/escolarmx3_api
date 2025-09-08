@@ -37,6 +37,20 @@ class Course extends Model {
 
     return Validator::make($data, $rules, $msgs);
   }
+    
+  public static function validCode($data, $id) {
+    $rules = [
+      'code' => 'unique:courses,code,' . $id,
+      'alt_code' => 'unique:courses,alt_code,' . $id
+    ];
+
+    $msgs = [
+      'code.unique' => 'El código ya ha sido registrado',
+      'alt_code.unique' => 'El código alternativo ya ha sido registrado',
+    ];
+
+    return Validator::make($data, $rules, $msgs);
+  }
 
   static public function getUiid($id) {
     return 'C-' . str_pad($id, 4, '0', STR_PAD_LEFT);

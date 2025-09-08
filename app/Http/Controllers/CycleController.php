@@ -95,6 +95,11 @@ class CycleController extends Controller
     DB::beginTransaction();
     try {
 
+      $valid = Cycle::validCode(['code' => $req->code], $id);
+      if ($valid->fails()) {
+        return $this->apiRsp(422, $valid->errors()->first());
+      }
+
       $valid = Cycle::valid($req->all());
 
       if ($valid->fails()) {
