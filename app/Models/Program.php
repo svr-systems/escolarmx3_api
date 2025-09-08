@@ -20,7 +20,7 @@ class Program extends Model {
     $rules = [
       'campus_id' => 'required|numeric',
       'name' => 'required|min:2|max:100',
-      'code' => 'required|min:2|max:10',
+      'code' => 'required|min:2|max:15',
       'issued_at' => 'required|date',
       'accreditation_id' => 'required|numeric',
       'modality_id' => 'required|numeric',
@@ -40,6 +40,13 @@ class Program extends Model {
     }
 
     $msgs = [];
+
+    return Validator::make($data, $rules, $msgs);
+  }
+  public static function validCode($data, $id) {
+    $rules = ['code' => 'unique:programs,code,' . $id];
+
+    $msgs = ['code.unique' => 'El RVOE ya ha sido registrado'];
 
     return Validator::make($data, $rules, $msgs);
   }

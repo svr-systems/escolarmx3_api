@@ -42,6 +42,11 @@ class LevelsSeeder extends Seeder {
         'name' => 'LICENCIATURA',
         'code' => '81'
       ],
+      [
+        'id' => 7,
+        'name' => 'BACHILLERATO',
+        'code' => 'BC'
+      ],
     ];
 
     Level::insert($items);

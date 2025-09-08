@@ -94,6 +94,11 @@ class ProgramController extends Controller {
     DB::beginTransaction();
     try {
 
+      $valid = Program::validCode(['code' => $req->code], $id);
+      if ($valid->fails()) {
+        return $this->apiRsp(422, $valid->errors()->first());
+      }
+
       $valid = Program::valid($req->all());
 
       if ($valid->fails()) {

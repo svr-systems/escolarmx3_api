@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreignId('updated_by_id')->constrained('users');
             $table->foreignId('campus_id')->constrained('campuses');
             $table->string('name',100);
-            $table->string('code', 10)->unique();
+            $table->string('code', 15)->unique();
             $table->date('issued_at');
             $table->foreignId('accreditation_id')->nullable()->constrained('accreditations');
             $table->foreignId('modality_id')->nullable()->constrained('modalities');
