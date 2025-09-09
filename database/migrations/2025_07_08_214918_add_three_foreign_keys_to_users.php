@@ -8,7 +8,7 @@ return new class extends Migration {
     public function up(): void {
         Schema::table('users', function (Blueprint $table) {
             $table->foreignId('role_id')->constrained('roles')->after('email_verified_at');
-            $table->foreignId('marital_status_id')->constrained('marital_statuses')->after('password');
+            $table->foreignId('marital_status_id')->nullable()->constrained('marital_statuses')->after('password');
             $table->foreignId('contact_kinship_id')->nullable()->constrained('kinships')->after('ine_path');
         });
     }

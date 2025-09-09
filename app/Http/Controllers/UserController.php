@@ -168,8 +168,8 @@ class UserController extends Controller {
           $user_campus_item = new UserCampus;
         }
         $user_campus_item->is_active = GenController::filter($user_campus['is_active'], 'b');
-        $user_campus_item->campus_id = GenController::filter($user_campus['campus_id'], 'id');
         $user_campus_item->user_id = $item->id;
+        $user_campus_item->campus_id = GenController::filter($user_campus['campus_id'], 'id');
         $user_campus_item->save();
       }
     }

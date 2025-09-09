@@ -150,12 +150,14 @@ class TeacherController extends Controller {
           if (!$teacher_degree_item) {
             $teacher_degree_item = new TeacherDegree;
           }
+
           $teacher_degree_item->is_active = GenController::filter($teacher_degree['is_active'], 'b');
+          $teacher_degree_item->teacher_id = $item->id;
           $teacher_degree_item->level_id = GenController::filter($teacher_degree['level_id'], 'id');
           $teacher_degree_item->institution_name = GenController::filter($teacher_degree['institution_name'], 'U');
           $teacher_degree_item->name = GenController::filter($teacher_degree['name'], 'U');
           $teacher_degree_item->license_number = GenController::filter($teacher_degree['license_number'], 'U');
-          $teacher_degree_item->teacher_id = $item->id;
+
           $file_name = 'teacher_degrees_license_doc_' . $key;
           $teacher_degree_item->license_path = DocMgrController::save(
             $teacher_degree['license_path'],
@@ -163,7 +165,15 @@ class TeacherController extends Controller {
             $req->license_dlt,
             'TeacherDegrees'
           );
-          // $teacher_degree_item->license_path = "---";
+
+          $file_name = 'teacher_degrees_title_doc_' . $key;
+          $teacher_degree_item->title_path = DocMgrController::save(
+            $teacher_degree['title_path'],
+            DocMgrController::exist($req->$file_name),
+            $req->title_dlt,
+            'TeacherDegrees'
+          );
+
           $teacher_degree_item->save();
         }
       }

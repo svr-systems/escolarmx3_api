@@ -40,7 +40,7 @@ class User extends Authenticatable {
       'surname_m' => 'nullable|min:2|max:25',
       'curp' => 'required|min:18|max:18',
       'phone' => 'nullable|min:10|max:10',
-      'marital_status_id' => 'required|numeric',
+      'marital_status_id' => 'nullable|numeric',
       'contact_kinship_id' => 'nullable|numeric',
       'contact_name' => 'nullable|min:2|max:100',
       'contact_phone' => 'nullable|min:10|max:15',
