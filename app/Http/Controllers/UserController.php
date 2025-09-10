@@ -122,7 +122,7 @@ class UserController extends Controller {
 
       $item = $this->saveItem($item, $req);
 
-      $this->saveDocuments($item,$req);
+      $this->saveDocuments($item,$req,$req);
 
       if ($email_current != $email) {
         $item->email_verified_at = null;
@@ -194,11 +194,11 @@ class UserController extends Controller {
     }
   }
 
-  public static function saveDocuments($item, $data,$prefix = '') {
+  public static function saveDocuments($item, $req, $data,$prefix = '') {
     $avatar_doc = $prefix . 'avatar_doc';
     $item->avatar_path = DocMgrController::save(
       $data->avatar_path,
-      DocMgrController::exist($data->$avatar_doc),
+      DocMgrController::exist($req->$avatar_doc),
       $data->avatar_dlt,
       'User'
     );
@@ -206,7 +206,7 @@ class UserController extends Controller {
     $curp_doc = $prefix . 'curp_doc';
     $item->curp_path = DocMgrController::save(
       $data->curp_path,
-      DocMgrController::exist($data->$curp_doc),
+      DocMgrController::exist($req->$curp_doc),
       $data->curp_dlt,
       'User'
     );
@@ -214,7 +214,7 @@ class UserController extends Controller {
     $birth_certificate_doc = $prefix . 'birth_certificate_doc';
     $item->birth_certificate_path = DocMgrController::save(
       $data->birth_certificate_path,
-      DocMgrController::exist($data->$birth_certificate_doc),
+      DocMgrController::exist($req->$birth_certificate_doc),
       $data->birth_certificate_dlt,
       'User'
     );
@@ -222,7 +222,7 @@ class UserController extends Controller {
     $ine_doc = $prefix . 'ine_doc';
     $item->ine_path = DocMgrController::save(
       $data->ine_path,
-      DocMgrController::exist($data->$ine_doc),
+      DocMgrController::exist($req->$ine_doc),
       $data->ine_dlt,
       'User'
     );

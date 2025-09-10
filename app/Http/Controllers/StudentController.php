@@ -132,7 +132,7 @@ class StudentController extends Controller {
       $this->saveItem($item, $req);
       
       $user = User::find($user->id);
-      UserController::saveDocuments($user, $req, 'user_');
+      UserController::saveDocuments($user, $req, $user_data, 'user_');
 
       DB::commit();
       return $this->apiRsp(

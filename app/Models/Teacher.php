@@ -76,6 +76,9 @@ class Teacher extends Model {
         $teacher_degree->license_b64 = DocMgrController::getB64($teacher_degree->license_path, 'TeacherDegrees');
         $teacher_degree->license_doc = null;
         $teacher_degree->license_dlt = false;
+        $teacher_degree->title_b64 = DocMgrController::getB64($teacher_degree->title_path, 'TeacherDegrees');
+        $teacher_degree->title_doc = null;
+        $teacher_degree->title_dlt = false;
         $teacher_degree->level = Level::find($teacher_degree->level_id, ['name', 'code']);
       }
     }

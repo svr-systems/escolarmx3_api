@@ -132,7 +132,7 @@ class TeacherController extends Controller {
       $item->user_id = $user->id;
 
       $user = User::find($user->id);
-      UserController::saveDocuments($user, $req, 'user_');
+      UserController::saveDocuments($user, $req, $user_data, 'user_');
 
       $item->cv_path = DocMgrController::save(
         $req->cv_path,
