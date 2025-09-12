@@ -150,7 +150,7 @@ class User extends Authenticatable {
       $item->full_name = GenController::getFullName($item);
       $item->role = Role::find($item->role_id, ['name']);
       $item->marital_status = MaritalStatus::find($item->marital_status_id, ['name']);
-      $item->contact_kinship_id = Kinship::find($item->contact_kinship_id_id, ['name']);
+      $item->contact_kinship = Kinship::find($item->contact_kinship_id, ['name']);
       $item->avatar_b64 = DocMgrController::getB64($item->avatar_path, 'User');
       $item->avatar_doc = null;
       $item->avatar_dlt = false;

@@ -156,6 +156,7 @@ class UserController extends Controller {
     $item->email = GenController::filter($data->email, 'l');
     $item->phone = GenController::filter($data->phone, 'U');
     $item->marital_status_id = GenController::filter($data->marital_status_id, 'id');
+    $item->contact_kinship_id = GenController::filter($data->contact_kinship_id, 'id');
     $item->contact_name = GenController::filter($data->contact_name, 'U');
     $item->contact_phone = GenController::filter($data->contact_phone, 'U');
     $item->save();
