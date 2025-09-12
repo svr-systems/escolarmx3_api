@@ -160,7 +160,7 @@ class UserController extends Controller {
     $item->contact_phone = GenController::filter($data->contact_phone, 'U');
     $item->save();
 
-    if ($data->user_campuses) {
+    if (isset($data->user_campuses)) {
       foreach ($data->user_campuses as $user_campus) {
         $user_campus = (array) $user_campus;
         $user_campus_item = UserCampus::find($user_campus['id']);
