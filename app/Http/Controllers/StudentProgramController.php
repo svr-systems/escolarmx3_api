@@ -9,19 +9,21 @@ use Throwable;
 
 class StudentProgramController extends Controller
 {
-  public function index(Request $req) {
+  public function index(Request $req)
+  {
     try {
       return $this->apiRsp(
         200,
         'Registros retornados correctamente',
-        ['items' => StudentProgram::getItems($req)]
+        ['items' => StudentProgram::getItems($req->student_id, $req->is_active)]
       );
     } catch (Throwable $err) {
       return $this->apiRsp(500, null, $err);
     }
   }
 
-  public function show(Request $req, $id) {
+  public function show(Request $req, $id)
+  {
     try {
       return $this->apiRsp(
         200,
@@ -33,7 +35,8 @@ class StudentProgramController extends Controller
     }
   }
 
-  public function destroy(Request $req, $id) {
+  public function destroy(Request $req, $id)
+  {
     DB::beginTransaction();
     try {
       $item = StudentProgram::find($id);
@@ -55,10 +58,10 @@ class StudentProgramController extends Controller
       DB::rollback();
       return $this->apiRsp(500, null, $err);
     }
-
   }
 
-  public function restore(Request $req) {
+  public function restore(Request $req)
+  {
     DB::beginTransaction();
     try {
       $item = StudentProgram::find($req->id);
@@ -83,15 +86,18 @@ class StudentProgramController extends Controller
     }
   }
 
-  public function store(Request $req) {
+  public function store(Request $req)
+  {
     return $this->storeUpdate($req, null);
   }
 
-  public function update(Request $req, $id) {
+  public function update(Request $req, $id)
+  {
     return $this->storeUpdate($req, $id);
   }
 
-  public function storeUpdate($req, $id) {
+  public function storeUpdate($req, $id)
+  {
     DB::beginTransaction();
     try {
 
@@ -126,7 +132,8 @@ class StudentProgramController extends Controller
     }
   }
 
-  public static function saveItem($item, $data, $is_req = true) {
+  public static function saveItem($item, $data, $is_req = true)
+  {
     if (!$is_req) {
       $item->active = GenController::filter($data->active, 'b');
     }

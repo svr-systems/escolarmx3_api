@@ -8,8 +8,10 @@ use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 use Validator;
 
-class StudentProgram extends Model {
-  protected function serializeDate(DateTimeInterface $date) {
+class StudentProgram extends Model
+{
+  protected function serializeDate(DateTimeInterface $date)
+  {
     return Carbon::instance($date)->toISOString(true);
   }
   protected $casts = [
@@ -17,7 +19,8 @@ class StudentProgram extends Model {
     'updated_at' => 'datetime:Y-m-d H:i:s',
   ];
 
-  public static function valid($data, $is_req = true) {
+  public static function valid($data, $is_req = true)
+  {
     $rules = [
       'student_id' => 'required|numeric',
       'program_id' => 'required|numeric',
@@ -37,17 +40,19 @@ class StudentProgram extends Model {
     return Validator::make($data, $rules, $msgs);
   }
 
-  static public function getUiid($id) {
+  static public function getUiid($id)
+  {
     return 'AP-' . str_pad($id, 4, '0', STR_PAD_LEFT);
   }
 
-  static public function getItems($req) {
-    $items = StudentProgram::
-      where('student_id', $req->student_id)->
-      where('is_active', boolval($req->is_active));
-
-    $items = $items->
-    get([
+  static public function getItems($student_id, $is_active)
+  {
+    $student_programs = StudentProgram::query()
+      ->where([
+        ['student_id', $student_id],
+        ['is_active', $is_active],
+      ])
+      ->get([
         'id',
         'is_active',
         'program_id',
@@ -55,33 +60,34 @@ class StudentProgram extends Model {
         'is_equivalency',
       ]);
 
-    foreach ($items as $key => $item) {
-      $item->key = $key;
-      $item->program = Program::find($item->program_id, ['name']);
-      $item->cycle_entry = Cycle::find($item->cycle_entry_id, ['code']);
-      $item->uiid = StudentProgram::getUiid($item->id);
+    foreach ($student_programs as $key => $student_program) {
+      $student_program->key = $key;
+      $student_program->program = Program::find($student_program->program_id, ['name', 'code', 'modality_id', 'level_id']);
+      $student_program->program->name_code = $student_program->program->name . ' | ' . $student_program->program->code;
+      $student_program->program->modality = Modality::find($student_program->program->modality_id, ['name']);
+      $student_program->program->level = Level::find($student_program->program->level_id, ['name']);
+      $student_program->cycle_entry = Cycle::find($student_program->cycle_entry_id, ['code']);
     }
-
-    return $items;
+    return $student_programs;
   }
 
-  static public function getItem($req, $id) {
-    $item = StudentProgram::
-    find($id, [
-        'id',
-        'is_active',
-        'created_at',
-        'updated_at',
-        'created_by_id',
-        'updated_by_id',
-        'program_id',
-        'cycle_entry_id',
-        'is_equivalency',
-        'equivalency_path',
-        'cycle_dropout_id',
-        'cycle_reentry_id',
-        'cycle_graduated_id',
-      ]);
+  static public function getItem($req, $id)
+  {
+    $item = StudentProgram::find($id, [
+      'id',
+      'is_active',
+      'created_at',
+      'updated_at',
+      'created_by_id',
+      'updated_by_id',
+      'program_id',
+      'cycle_entry_id',
+      'is_equivalency',
+      'equivalency_path',
+      'cycle_dropout_id',
+      'cycle_reentry_id',
+      'cycle_graduated_id',
+    ]);
 
     if ($item) {
       $item->uiid = StudentProgram::getUiid($item->id);

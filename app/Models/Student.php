@@ -2,17 +2,18 @@
 
 namespace App\Models;
 
-use App\Http\Controllers\DocMgrController;
 use App\Http\Controllers\GenController;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Validator;
 
-class Student extends Model {
+class Student extends Model
+{
   use HasFactory;
   public $timestamps = false;
 
-  public static function valid($data, $is_req = true) {
+  public static function valid($data, $is_req = true)
+  {
     $rules = [
       'user_id' => 'required|numeric',
       'student_number' => 'nullable|min:2|max:15',
@@ -27,47 +28,76 @@ class Student extends Model {
     return Validator::make($data, $rules, $msgs);
   }
 
-  static public function getUiid($id) {
-    return 'E-' . str_pad($id, 4, '0', STR_PAD_LEFT);
+  static public function getUiid($id)
+  {
+    return 'A-' . str_pad($id, 4, '0', STR_PAD_LEFT);
   }
 
-  static public function getItems($req) {
-    $items = Student::
-      join('users', 'students.user_id', 'users.id')->
-      where('is_active', boolval($req->is_active));
+  static public function getItems($req)
+  {
+    $program_id = (int) $req->program_id;
 
-    $items = $items->
-      get([
+    $students = Student::query()
+      ->join('users', 'students.user_id', 'users.id')
+      ->where('users.is_active', $req->is_active);
+
+    if ($program_id != 0) {
+      $students->join('student_programs', 'student_programs.student_id', 'students.id')
+        ->where([
+          ['student_programs.program_id', $program_id],
+          ['student_programs.is_active', 1],
+        ]);
+    }
+
+    $students = $students
+      ->orderBy('name')
+      ->orderBy('surname_p')
+      ->orderBy('surname_m')
+      ->get([
         'students.id',
+        'students.user_id',
         'users.is_active',
-        'user_id',
-        'student_number',
+        'users.name',
+        'users.surname_p',
+        'users.surname_m',
+        'users.curp',
+        'users.email',
       ]);
 
-    foreach ($items as $key => $item) {
-      $item->key = $key;
-      $item->uiid = Student::getUiid($item->id);
-      $item->user = User::find($item->user_id, ['name', 'surname_p', 'surname_m', 'curp']);
-      $item->user->full_name = GenController::getFullName($item->user);
+    foreach ($students as $key => $student) {
+      $student->key = $key;
+      $student->full_name = GenController::getFullName($student);
+
+      $student_programs = StudentProgram::query()
+        ->where([
+          ['student_id', $student->id],
+          ['is_active', 1],
+        ])
+        ->get('program_id');
+
+      $student->lab_programs = '';
+      foreach ($student_programs as $key => $student_program) {
+        $program = Program::find($student_program->program_id, ['name', 'code']);
+
+        $student->lab_programs .= $program->name . " | " . $program->code . "\n";
+      }
     }
 
-    return $items;
+    return $students;
   }
 
-  static public function getItem($req, $id) {
-    $item = Student::
-      find($id, [
-        'id',
-        'user_id',
-        'student_number',
-      ]);
+  static public function getItem($req, $id)
+  {
+    $item = Student::find($id, [
+      'id',
+      'user_id',
+      'student_number',
+    ]);
 
-    if ($item) {
-      $item->uiid = Student::getUiid($item->id);
-      $item->created_by = User::find($item->created_by_id, ['email']);
-      $item->updated_by = User::find($item->updated_by_id, ['email']);
-      $item->user = User::getItem(null,$item->user_id);
-    }
+    $item->user = User::getItem(null, $item->user_id);
+    $item->student_degrees = StudentDegree::getItems($id, 1);
+    $item->student_documents = StudentDocument::getItems($id, 1);
+    $item->student_programs = StudentProgram::getItems($id, 1);
 
     return $item;
   }

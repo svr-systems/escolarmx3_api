@@ -10,7 +10,8 @@ use Validator;
 
 class StudentDegree extends Model
 {
-  protected function serializeDate(DateTimeInterface $date) {
+  protected function serializeDate(DateTimeInterface $date)
+  {
     return Carbon::instance($date)->toISOString(true);
   }
   protected $casts = [
@@ -18,7 +19,8 @@ class StudentDegree extends Model
     'updated_at' => 'datetime:Y-m-d H:i:s',
   ];
 
-  public static function valid($data, $is_req = true) {
+  public static function valid($data, $is_req = true)
+  {
     $rules = [
       'student_id' => 'required|numeric',
       'level_id' => 'required|numeric',
@@ -39,45 +41,21 @@ class StudentDegree extends Model
     return Validator::make($data, $rules, $msgs);
   }
 
-  static public function getUiid($id) {
+  static public function getUiid($id)
+  {
     return 'AE-' . str_pad($id, 4, '0', STR_PAD_LEFT);
   }
 
-  static public function getItems($req) {
-    $items = StudentDegree::
-    where('student_id',$req->student_id)->
-    where('is_active', boolval($req->is_active));
-
-    $items = $items->
-    get([
+  static public function getItems($student_id, $is_active)
+  {
+    $student_degrees = StudentDegree::query()
+      ->where([
+        ['student_id', $student_id],
+        ['is_active', $is_active],
+      ])
+      ->get([
         'id',
         'is_active',
-        'level_id',
-        'institution_name',
-        'name',
-        'start_at',
-        'end_at',
-        'license_number',
-      ]);
-
-    foreach ($items as $key => $item) {
-      $item->key = $key;
-      $item->uiid = StudentDegree::getUiid($item->id);
-      $item->level = Level::find($item->id);
-    }
-
-    return $items;
-  }
-
-  static public function getItem($req, $id) {
-    $item = StudentDegree::
-    find($id, [
-        'id',
-        'is_active',
-        'created_at',
-        'updated_at',
-        'created_by_id',
-        'updated_by_id',
         'level_id',
         'institution_name',
         'name',
@@ -85,17 +63,49 @@ class StudentDegree extends Model
         'start_at',
         'end_at',
         'license_number',
-        'license_path',
-        'certificate_path',
-        'title_path',
       ]);
+
+    foreach ($student_degrees as $key => $student_degree) {
+      $student_degree->key = $key;
+      $student_degree->level = Level::find($student_degree->level_id, ['name']);
+
+      $municipality = Municipality::find($student_degree->municipality_id, ['name', 'state_id']);
+      $municipality->state = State::find($municipality->state_id, ['name']);
+      $student_degree->municipality_state = $municipality->name . " | " . $municipality->state->name;
+
+      $student_degree->term = $student_degree->start_at . " | " . $student_degree->end_at;
+    }
+
+    return $student_degrees;
+  }
+
+  static public function getItem($req, $id)
+  {
+    $item = StudentDegree::find($id, [
+      'id',
+      'is_active',
+      'created_at',
+      'updated_at',
+      'created_by_id',
+      'updated_by_id',
+      'level_id',
+      'institution_name',
+      'name',
+      'municipality_id',
+      'start_at',
+      'end_at',
+      'license_number',
+      'license_path',
+      'certificate_path',
+      'title_path',
+    ]);
 
     if ($item) {
       $item->uiid = StudentDegree::getUiid($item->id);
       $item->created_by = User::find($item->created_by_id, ['email']);
       $item->updated_by = User::find($item->updated_by_id, ['email']);
-      $item->level = Level::find($item->level_id,['name']);
-      $item->municipality = Municipality::find($item->municipality_id,['name','state_id']);
+      $item->level = Level::find($item->level_id, ['name']);
+      $item->municipality = Municipality::find($item->municipality_id, ['name', 'state_id']);
       $item->municipality->state = State::find($item->municipality->state_id, ['name']);
       $item->license_b64 = DocMgrController::getB64($item->license_path, 'StudentDegrees');
       $item->license_doc = null;
